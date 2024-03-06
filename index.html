@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <title>QR Code Generator</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://trst.uk/css/app.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/19a0336ebe.js" crossorigin="anonymous"></script>
+    <style>
+        body {
+            font-family: 'Raleway', sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #ffffff;
+        }
+
+        #header {
+            width: 100%;
+            background-color: #FFFFFF;
+            padding: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        #header img {
+            height: 100px;
+        }
+
+        div#form-container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border: 5px solid #f7d32e;
+            max-width: 600px;
+            width: 100%;
+            margin: auto;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            color: #000000;
+        }
+
+        p {
+            font-size: 60%;
+        }
+
+        select,
+        button {
+            margin-top: 10px;
+        }
+
+        button {
+            background-color: #5D3FD3;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #4c32cc;
+        }
+
+        #downloadResultsButton {
+            display: none;
+        }
+
+        .containers-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            align-items: flex-start;
+            width: 100%;
+        }
+
+        .container {
+            flex: 0 0 30%;
+            margin: 10px;
+        }
+
+        .output-score {
+            display: none;
+        }
+
+        .container-score {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #e9e9e9;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        select {
+            width: 100%;
+            height: 40px;
+            padding: 5px 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            background-color: white;
+            cursor: pointer;
+        }
+
+        select:hover {
+            border-color: #aaa;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #5D3FD3;
+        }
+
+        #spinner {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2em;
+            color: #5D3FD3;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        th {
+            background-color: #5D3FD3;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="header">
+        <img src="https://www.trustimpact.com/wp-content/uploads/2020/09/trust-impact-logo.png" alt="Trust Impact Logo" style="height: 100px;">
+    </div>
+
+    <h1>QR Code Generator</h1>
+    <label for="text">Enter text or URL:</label>
+    <input type="text" id="text">
+    <button onclick="generateQRCode()">Generate QR Code</button>
+    <button id="downloadResultsButton" onclick="downloadQRCode()">Download QR Code</button>
+    <div id="qrcode"></div>
+
+    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+    <script>
+        var qrcodeInstance;
+
+        function generateQRCode() {
+            var text = document.getElementById('text').value;
+            if (text !== '') {
+                // Clear existing QR code
+                document.getElementById('qrcode').innerHTML = '';
+
+                // Generate new QR code
+                qrcodeInstance = new QRCode(document.getElementById('qrcode'), {
+                    text: text,
+                    width: 256,
+                    height: 256,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+
+                // Show download button
+                document.getElementById('downloadResultsButton').style.display = 'block';
+            } else {
+                alert('Please enter some text or URL.');
+            }
+        }
+
+        function downloadQRCode() {
+            if (qrcodeInstance) {
+                var canvas = document.getElementById('qrcode').getElementsByTagName('canvas')[0];
+                var url = canvas.toDataURL('image/png').replace(/^data:image\/[^;]/, 'data:application/octet-stream');
+                var link = document.createElement('a');
+                link.download = 'qrcode.png';
+                link.href = url;
+                link.click();
+            } else {
+                alert('No QR code generated.');
+            }
+        }
+    </script>
+</body>
+
+</html>
