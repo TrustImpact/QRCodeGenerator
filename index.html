@@ -153,6 +153,7 @@
         }
         #qrcode {
             margin-top: 20px; /* Add some margin to create space between the QR code and the download button */
+            padding: 20px; /* Add padding to create more whitespace around the QR code */
     }
     </style>
 </head>
@@ -173,41 +174,57 @@
     <script>
         var qrcodeInstance;
 
-        function generateQRCode() {
-            var text = document.getElementById('text').value;
-            if (text !== '') {
-                // Clear existing QR code
-                document.getElementById('qrcode').innerHTML = '';
+    function generateQRCode() {
+        var text = document.getElementById('text').value;
+        if (text !== '') {
+            // Clear existing QR code
+            document.getElementById('qrcode').innerHTML = '';
 
-                // Generate new QR code
-                qrcodeInstance = new QRCode(document.getElementById('qrcode'), {
-                    text: text,
-                    width: 256,
-                    height: 256,
-                    colorDark: "#000000",
-                    colorLight: "#ffffff",
-                    correctLevel: QRCode.CorrectLevel.H
-                });
+            // Generate new QR code with increased dimensions and padding
+            qrcodeInstance = new QRCode(document.getElementById('qrcode'), {
+                text: text,
+                width: 356, // Increase width
+                height: 356, // Increase height
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
 
-                // Show download button
-                document.getElementById('downloadResultsButton').style.display = 'block';
-            } else {
-                alert('Please enter some text or URL.');
-            }
+            // Show download button
+            document.getElementById('downloadResultsButton').style.display = 'block';
+        } else {
+            alert('Please enter some text or URL.');
         }
+    }
 
-        function downloadQRCode() {
-            if (qrcodeInstance) {
-                var canvas = document.getElementById('qrcode').getElementsByTagName('canvas')[0];
-                var url = canvas.toDataURL('image/png').replace(/^data:image\/[^;]/, 'data:application/octet-stream');
-                var link = document.createElement('a');
-                link.download = 'qrcode.png';
-                link.href = url;
-                link.click();
-            } else {
-                alert('No QR code generated.');
-            }
+    function downloadQRCode() {
+        if (qrcodeInstance) {
+            var canvas = document.getElementById('qrcode').getElementsByTagName('canvas')[0];
+            
+            // Create a new canvas with increased dimensions and padding
+            var newCanvas = document.createElement('canvas');
+            var context = newCanvas.getContext('2d');
+            var padding = 20; // Adjust padding as needed
+            newCanvas.width = canvas.width + 2 * padding;
+            newCanvas.height = canvas.height + 2 * padding;
+            
+            // Fill the new canvas with white background
+            context.fillStyle = '#ffffff';
+            context.fillRect(0, 0, newCanvas.width, newCanvas.height);
+            
+            // Draw the original QR code onto the new canvas with padding
+            context.drawImage(canvas, padding, padding);
+            
+            // Convert the new canvas to an image and download it
+            var url = newCanvas.toDataURL('image/png').replace(/^data:image\/[^;]/, 'data:application/octet-stream');
+            var link = document.createElement('a');
+            link.download = 'qrcode.png';
+            link.href = url;
+            link.click();
+        } else {
+            alert('No QR code generated.');
         }
+}
     </script>
 </body>
 
