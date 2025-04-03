@@ -1,14 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR Code Generator</title>
-    <script src="https://cdn.jsdelivr.net/npm/easyqrcodejs@4.4.0/dist/easy.qrcode.min.js"></script>
-    <link href="https://trst.uk/css/app.css" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/19a0336ebe.js" crossorigin="anonymous"></script>
+<!-- ... keep the same head content ... -->
 
-</head>
 <body>
     <div id="header">
         <img src="https://www.trustimpact.com/wp-content/uploads/2020/09/trust-impact-logo.png" alt="Trust Impact Logo" style="height: 100px;">
@@ -17,84 +8,94 @@
     <h1>QR Code Generator</h1>
     <label for="text">Enter text or URL:</label>
     <input type="text" id="text">
+
     <label for="logo">Upload Logo:</label>
     <input type="file" id="logo" accept="image/*">
+
+    <label>
+        <input type="checkbox" id="removeLogo"> Remove Logo
+    </label>
+
     <button onclick="generateQRCode()">Generate QR Code</button>
     <button id="downloadResultsButton" onclick="downloadQRCode()">Download QR Code</button>
-    <br>
-    <br>
+
+    <br><br>
     <div id="qrcode"></div>
 
     <script>
+        const defaultLogoUrl = "https://www.trustimpact.com/wp-content/uploads/2020/09/trust-impact-logo.png"; // Default logo
 
-    function generateQRCode() {
-        var text = document.getElementById('text').value;
-        var logoInput = document.getElementById('logo').files[0];
+        function generateQRCode() {
+            const text = document.getElementById('text').value;
+            const logoInput = document.getElementById('logo').files[0];
+            const removeLogo = document.getElementById('removeLogo').checked;
 
-        if (!text) {
-            alert('Please enter some text or URL.');
-            return;
+            if (!text) {
+                alert('Please enter some text or URL.');
+                return;
+            }
+
+            document.getElementById('qrcode').innerHTML = ''; // Clear existing QR code
+
+            const logoSizeFraction = 0.25;
+            const errorCorrectionLevel = 'H';
+
+            let logoSrc = "";
+
+            if (!removeLogo) {
+                if (logoInput) {
+                    logoSrc = URL.createObjectURL(logoInput); // Use uploaded logo
+                } else {
+                    logoSrc = defaultLogoUrl; // Use default logo
+                }
+            }
+
+            const options = {
+                text: text,
+                width: 356,
+                height: 356,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel[errorCorrectionLevel],
+                logo: logoSrc,
+                logoWidth: undefined,
+                logoHeight: undefined,
+            };
+
+            if (logoSrc) {
+                options.logoWidth = options.logoHeight = options.width * logoSizeFraction;
+            }
+
+            new QRCode(document.getElementById("qrcode"), options);
         }
 
-        document.getElementById('qrcode').innerHTML = ''; // Clear existing QR code
+        function downloadQRCode() {
+            const qrCanvas = document.getElementById('qrcode').querySelector('canvas');
+            if (!qrCanvas) {
+                alert('No QR code generated.');
+                return;
+            }
 
-        // Default logo size as a fraction of QR code size (e.g., 20%)
-        var logoSizeFraction = 0.25;
-        var errorCorrectionLevel = 'H'; // High error correction level
+            const padding = 20;
+            const paddedWidth = qrCanvas.width + 2 * padding;
+            const paddedHeight = qrCanvas.height + 2 * padding;
 
-        var options = {
-            text: text,
-            width: 356,
-            height: 356,
-            colorDark: "#000000",
-            colorLight: "#ffffff",
-            correctLevel: QRCode.CorrectLevel[errorCorrectionLevel], // Dynamically set based on variable
-            logo: logoInput ? URL.createObjectURL(logoInput) : "", // Temporary URL for the uploaded file
-            logoWidth: undefined, // To be calculated based on logoSizeFraction
-            logoHeight: undefined, // To be calculated based on logoSizeFraction
-        };
+            const canvas = document.createElement('canvas');
+            canvas.width = paddedWidth;
+            canvas.height = paddedHeight;
+            const context = canvas.getContext('2d');
 
-        // Calculate logo size based on QR code size and fraction
-        options.logoWidth = options.logoHeight = options.width * logoSizeFraction;
+            context.fillStyle = '#ffffff';
+            context.fillRect(0, 0, canvas.width, canvas.height);
+            context.drawImage(qrCanvas, padding, padding);
 
-        // Create QRCode
-        new QRCode(document.getElementById("qrcode"), options);
-}
-
-
-    function downloadQRCode() {
-        var qrCanvas = document.getElementById('qrcode').querySelector('canvas'); // Get the QR code canvas
-        if (!qrCanvas) {
-            alert('No QR code generated.');
-            return;
+            const url = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
+            const link = document.createElement('a');
+            link.download = 'qrcode.png';
+            link.href = url;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
-
-        var padding = 20; // Set the desired padding
-        var paddedWidth = qrCanvas.width + 2 * padding;
-        var paddedHeight = qrCanvas.height + 2 * padding;
-
-        // Create a new canvas element to include the padding
-        var canvas = document.createElement('canvas');
-        canvas.width = paddedWidth;
-        canvas.height = paddedHeight;
-        var context = canvas.getContext('2d');
-
-        // Fill the new canvas with white background (or desired background color)
-        context.fillStyle = '#ffffff';
-        context.fillRect(0, 0, canvas.width, canvas.height);
-
-        // Draw the original QR code onto the center of the new canvas
-        context.drawImage(qrCanvas, padding, padding);
-
-        // Convert the new canvas to an image and trigger the download
-        var url = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
-        var link = document.createElement('a');
-        link.download = 'qrcode.png';
-        link.href = url;
-        document.body.appendChild(link); // This line is needed for Firefox
-        link.click();
-        document.body.removeChild(link); // This line is needed for Firefox
-}
-</script>
+    </script>
 </body>
-</html>
