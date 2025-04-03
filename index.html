@@ -10,7 +10,7 @@
 </head>
 <body>
     <div id="header">
-        <img src="https://www.trustimpact.com/wp-content/uploads/2020/09/trust-impact-logo.png" alt="Trust Impact Logo" style="height: 100px;">
+        <img src="splash.png" alt="Trust Impact Logo" style="height: 100px;">
     </div>
 
     <h1>QR Code Generator</h1>
@@ -37,7 +37,7 @@
     <div id="qrcode"></div>
 
     <script>
-        const defaultLogoUrl = "https://www.trustimpact.com/wp-content/uploads/2020/09/trust-impact-logo.png"; // Default logo
+        const defaultLogoUrl = "splash.png"; // Local default logo
 
         function generateQRCode() {
             const text = document.getElementById('text').value;
@@ -60,7 +60,7 @@
                 if (logoInput) {
                     logoSrc = URL.createObjectURL(logoInput); // Use uploaded logo
                 } else {
-                    logoSrc = defaultLogoUrl; // Use default logo
+                    logoSrc = defaultLogoUrl; // Use local default logo
                 }
             }
 
