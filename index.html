@@ -1,25 +1,39 @@
-<!-- ... keep the same head content ... -->
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator</title>
+    <script src="https://cdn.jsdelivr.net/npm/easyqrcodejs@4.4.0/dist/easy.qrcode.min.js"></script>
+    <link href="https://trst.uk/css/app.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/19a0336ebe.js" crossorigin="anonymous"></script>
+</head>
 <body>
     <div id="header">
         <img src="https://www.trustimpact.com/wp-content/uploads/2020/09/trust-impact-logo.png" alt="Trust Impact Logo" style="height: 100px;">
     </div>
 
     <h1>QR Code Generator</h1>
+
     <label for="text">Enter text or URL:</label>
     <input type="text" id="text">
+
+    <br><br>
 
     <label for="logo">Upload Logo:</label>
     <input type="file" id="logo" accept="image/*">
 
-    <label>
+    <label style="margin-left: 10px;">
         <input type="checkbox" id="removeLogo"> Remove Logo
     </label>
+
+    <br><br>
 
     <button onclick="generateQRCode()">Generate QR Code</button>
     <button id="downloadResultsButton" onclick="downloadQRCode()">Download QR Code</button>
 
     <br><br>
+
     <div id="qrcode"></div>
 
     <script>
@@ -99,3 +113,4 @@
         }
     </script>
 </body>
+</html>
